@@ -1,5 +1,4 @@
 from django.db import models
-from .forms import ReorderItemsFormField
 
 
 class ReorderItemsField(models.PositiveSmallIntegerField):
@@ -24,14 +23,3 @@ class ReorderItemsField(models.PositiveSmallIntegerField):
         kwargs['blank'] = True
 
         super().__init__(*args, **kwargs)
-
-    def formfield(self, **kwargs):
-        """
-        Customising the ``form_class``.
-
-        :return: IntegerField with a custom ``form_class``.
-        :rtype: django.db.models.IntegerField
-        """
-        defaults = {'form_class': ReorderItemsFormField}
-        defaults.update(kwargs)
-        return super().formfield(**defaults)
