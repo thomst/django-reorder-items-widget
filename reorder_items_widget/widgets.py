@@ -15,8 +15,11 @@ class ReorderItemsWidget(NumberInput):
         js = ('js/reorder-items-widget.js',)
 
     def build_attrs(self, base_attrs, extra_attrs):
+        """
+        Add the CSS classes for the widget.
+        """
         attrs = super().build_attrs(base_attrs, extra_attrs)
         classes = attrs['class'].split(' ') if attrs.get('class') else []
-        classes += ['reorder-items-widget-index']
+        classes += ['reorder-items-widget-index', 'hidden']
         attrs['class'] = ' '.join(classes)
         return attrs
