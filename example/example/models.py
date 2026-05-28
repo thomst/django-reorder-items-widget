@@ -1,4 +1,5 @@
 from django.db import models
+from reorder_items_widget.models import ReorderItemsField
 
 
 class Container(models.Model):
@@ -13,7 +14,7 @@ class BaseItem(models.Model):
     Base for simple item models with an index for ordering.
     """
     name = models.CharField('Name', max_length=255)
-    index = models.PositiveSmallIntegerField()
+    index = ReorderItemsField()
     container = models.ForeignKey(Container, on_delete=models.CASCADE)
 
     class Meta:

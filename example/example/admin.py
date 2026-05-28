@@ -1,15 +1,10 @@
 from django.contrib import admin
+from reorder_items_widget.admin import ReorderItemsModelAdminMixin, ReorderItemsInlineMixin
 from .models import Container, Item, AnotherItem
-from .forms import ItemForm
 
 
-class BaseItemAdmin(admin.ModelAdmin):
-    list_editable = ("index",)
-    list_display = ("name", "index")
-
-    def get_changelist_form(self, request, **kwargs):
-        kwargs.setdefault('form', ItemForm)
-        return super().get_changelist_form(request, **kwargs)
+class BaseItemAdmin(ReorderItemsModelAdminMixin, admin.ModelAdmin):
+    list_display = ("name",)
 
 
 @admin.register(Item)
@@ -22,10 +17,9 @@ class AnotherItemAdmin(BaseItemAdmin):
     pass
 
 
-class BaseItemInline(admin.TabularInline):
-    form = ItemForm
+class BaseItemInline(ReorderItemsInlineMixin, admin.TabularInline):
     extra = 1
-    fields = ("name", "index")
+    fields = ("name",)
 
 
 class ItemInline(BaseItemInline):
