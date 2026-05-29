@@ -1,12 +1,12 @@
 from django.db import models
 from django.dispatch import receiver
 from django.core.exceptions import FieldError
-from .models import ReorderItemsField
+from .models import ReorderItemsFieldMixin
 
 
 def get_reorder_items_field(instance):
     fields = instance._meta.get_fields()
-    return next((f for f in fields if isinstance(f, ReorderItemsField)), None)
+    return next((f for f in fields if isinstance(f, ReorderItemsFieldMixin)), None)
 
 
 def get_items(instance):
@@ -30,7 +30,7 @@ def pre_save_reorder_items(sender, instance, **kwargs):
         return
 
     # Check if instance has a reorder items field.
-    if not any([isinstance(f, ReorderItemsField) for f in instance._meta.get_fields()]):
+    if not any([isinstance(f, ReorderItemsFieldMixin) for f in instance._meta.get_fields()]):
         return
 
     # Set the index to the next higher value.
@@ -44,7 +44,7 @@ def pre_save_reorder_items(sender, instance, **kwargs):
 @receiver(models.signals.post_delete)
 def post_delete_reorder_items(sender, instance, **kwargs):
     # Check if instance has a reorder items field.
-    if not any([isinstance(f, ReorderItemsField) for f in instance._meta.get_fields()]):
+    if not any([isinstance(f, ReorderItemsFieldMixin) for f in instance._meta.get_fields()]):
         return
 
     field = get_reorder_items_field(instance)

@@ -2,12 +2,12 @@ from django.db import models
 from .widgets import ReorderItemsWidget
 
 
-class ReorderItemsField(models.PositiveSmallIntegerField):
+class ReorderItemsFieldMixin:
     """
-    A field to store the index of an item for reordering purposes.
+    This mixin makes any kind of integer fields to an index field for reordering
+    purposes.
 
-    This is a PositiveSmallIntegerField with some customizations:
-    You can
+    TODO
     """
 
     def __init__(self, *args, grouped_by=None, **kwargs):
@@ -34,3 +34,9 @@ class ReorderItemsField(models.PositiveSmallIntegerField):
         """
         kwargs['widget'] = ReorderItemsWidget()
         return super().formfield(**kwargs)
+
+
+class ReorderItemsField(ReorderItemsFieldMixin, models.PositiveSmallIntegerField):
+    """
+    A PositivSmallIntegerField using the :class:`.ReorderItemsFieldMixin`.
+    """

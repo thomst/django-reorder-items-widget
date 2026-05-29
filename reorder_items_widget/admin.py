@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from .models import ReorderItemsField
+from .models import ReorderItemsFieldMixin
 
 
 class BaseReorderItemsAdminMixin:
     def get_reorder_items_field(self):
         fields = self.model._meta.get_fields()
         try:
-            return next((f for f in fields if isinstance(f, ReorderItemsField)))
+            return next((f for f in fields if isinstance(f, ReorderItemsFieldMixin)))
         except StopIteration:
             raise AttributeError(f'Model has not ReorderItemsField: {self.model}')
 
