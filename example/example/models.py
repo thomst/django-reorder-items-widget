@@ -14,7 +14,7 @@ class BaseItem(models.Model):
     Base for simple item models with an index for ordering.
     """
     name = models.CharField('Name', max_length=255)
-    index = ReorderItemsField()
+    index = ReorderItemsField(grouped_by=['container'])
     container = models.ForeignKey(Container, on_delete=models.CASCADE)
 
     class Meta:
