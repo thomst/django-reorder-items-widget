@@ -5,13 +5,6 @@ from .widgets import ReorderItemsWidget
 
 
 class BaseReorderItemsAdminMixin:
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Update formfield_overwrites.
-        self.formfield_overrides = self.formfield_overrides or dict()
-        self.formfield_overrides[ReorderItemsField] = dict(widget=ReorderItemsWidget())
-
     def get_reorder_items_field(self):
         fields = self.model._meta.get_fields()
         try:
@@ -22,9 +15,8 @@ class BaseReorderItemsAdminMixin:
 
 class ReorderItemsInlineMixin(BaseReorderItemsAdminMixin):
     """
-    An inline mixin updating `formfield_overrides` to use the
-    :class:`~.widgets.ReorderItemsWidget` for
-    :class:`~.models.ReorderItemsField` fields.
+    An inline mixin adding the name of the :class:`~.models.ReorderItemsField`
+    to the `fields` attribute.
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -38,12 +30,8 @@ class ReorderItemsInlineMixin(BaseReorderItemsAdminMixin):
 
 class ReorderItemsModelAdminMixin(BaseReorderItemsAdminMixin):
     """
-    An model admin mixin setting `formfield_overrides` to use the
-    :class:`~.widgets.ReorderItemsWidget` for
-    :class:`~.models.ReorderItemsField` fields.
-
-    We also exclude reorder items field from the change form. This field is not
-    ment to be set or updated manually.
+    An inline mixin adding the name of the :class:`~.models.ReorderItemsField`
+    to the `list_display`, `exclude` and `list_editable` attributes.
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
