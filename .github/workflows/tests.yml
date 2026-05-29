@@ -63,7 +63,7 @@ jobs:
         pip install --editable ./
 
     - name: Run Tests
-      run: coverage run --source=reorder_items_widget/ example/manage.py test
+      run: coverage run --source=reorder_items_widget/ example/manage.py test example
 
     - name: Create coverage lcov file
       run: coverage lcov -o coverage.lcov
