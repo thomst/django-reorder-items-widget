@@ -1,7 +1,6 @@
 from django.contrib import admin
 
 from .models import ReorderItemsField
-from .widgets import ReorderItemsWidget
 
 
 class BaseReorderItemsAdminMixin:
