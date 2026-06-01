@@ -25,10 +25,6 @@ class ReorderItemsFieldMixin:
             msg += 'This will cause trouble updating its values.'
             raise ValueError(msg)
 
-        # We need blank=True since the form field will be hidden and updated
-        # by a pre_save signal handler.
-        kwargs['blank'] = True
-
         super().__init__(*args, **kwargs)
 
 
