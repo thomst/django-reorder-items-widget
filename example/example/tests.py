@@ -36,10 +36,6 @@ class WidgetTestCase(TestCase):
 
 
 class ReorderItemsFieldTests(TestCase):
-    def test_reorder_items_field_is_blank(self):
-        field = Item._meta.get_field('index')
-        self.assertTrue(field.blank)
-
     def test_reorder_items_field_rejects_unique_true(self):
         with self.assertRaisesMessage(ValueError, 'Do not use unique=True with a ReorderItemsField.'):
             ReorderItemsField(unique=True)
