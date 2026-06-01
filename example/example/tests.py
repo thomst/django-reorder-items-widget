@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.urls import reverse
 
 from example.admin import ItemInline, BaseItemAdmin
 from example.models import Container, Item
@@ -37,11 +39,6 @@ class ReorderItemsFieldTests(TestCase):
     def test_reorder_items_field_is_blank(self):
         field = Item._meta.get_field('index')
         self.assertTrue(field.blank)
-
-    def test_reorder_items_field_formfield_uses_widget(self):
-        field = Item._meta.get_field('index')
-        form_field = field.formfield()
-        self.assertIsInstance(form_field.widget, ReorderItemsWidget)
 
     def test_reorder_items_field_rejects_unique_true(self):
         with self.assertRaisesMessage(ValueError, 'Do not use unique=True with a ReorderItemsField.'):
@@ -83,3 +80,32 @@ class ReorderItemsAdminTests(TestCase):
         inline = ItemInline(Container, admin.site)
 
         self.assertIn('index', inline.fields)
+
+
+class ReorderItemsAdminRenderTests(TestCase):
+    fixtures = ['testdata.json']
+
+    def setUp(self):
+        User = get_user_model()
+        self.admin_user = User.objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='password',
+        )
+        self.client.force_login(self.admin_user)
+
+    def test_reorder_items_widget_rendered_in_changelist(self):
+        url = reverse('admin:example_item_changelist')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="drag-handle"')
+        self.assertContains(response, 'reorder-items-widget-index')
+
+    def test_reorder_items_widget_rendered_in_inline_forms(self):
+        url = reverse('admin:example_container_change', args=(1,))
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="drag-handle"')
+        self.assertContains(response, 'reorder-items-widget-index')
