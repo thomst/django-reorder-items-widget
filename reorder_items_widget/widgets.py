@@ -1,12 +1,12 @@
 from django.forms import NumberInput
 
 
-class ReorderItemsWidget(NumberInput):
+class ReoroderItemsWidgetMixin:
     """
-    Makes a number field a reorder items widget. Means the original field will
-    be hidden and a drag handler will be displayed instead. Items in result
-    lists and inline formsets will be reorderable by dragging the rows to their
-    new position.
+    Widget to make a number input a reorder items widget. Means the original
+    field will be hidden and a drag handler will be displayed instead. Items in
+    result lists and inline formsets will be reorderable by dragging the rows to
+    their new position.
     """
     template_name = 'forms/widgets/reorder-items-widget.html'
 
@@ -23,3 +23,9 @@ class ReorderItemsWidget(NumberInput):
         classes += ['reorder-items-widget-index', 'hidden']
         attrs['class'] = ' '.join(classes)
         return attrs
+
+
+class ReorderItemsWidget(ReoroderItemsWidgetMixin, NumberInput):
+    """
+    A NumberInput widget using the :class:`.ReoroderItemsWidgetMixin`.
+    """
