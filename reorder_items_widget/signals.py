@@ -42,7 +42,8 @@ def pre_save_reorder_items(sender, instance, **kwargs):
     field = get_reorder_items_field(instance)
     items = get_items(instance)
     max_index = items.aggregate(models.Max(field.name))[f'{field.name}__max'] or -1
-    setattr(instance, field.name, max_index + 1)
+    if getattr(instance, field.name) is None:
+        setattr(instance, field.name, max_index + 1)
 
 
 
