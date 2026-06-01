@@ -1,6 +1,12 @@
 from django.forms import NumberInput
 
 
+__all__ = (
+    'ReoroderItemsWidgetMixin',
+    'ReorderItemsWidget',
+)
+
+
 class ReoroderItemsWidgetMixin:
     """
     Widget to make a number input a reorder items widget. Means the original

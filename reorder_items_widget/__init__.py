@@ -1,1 +1,3 @@
-from .widgets import ReorderItemsWidget
+from .widgets import *  # noqa
+from .models import *  # noqa
+from .admin import *  # noqa

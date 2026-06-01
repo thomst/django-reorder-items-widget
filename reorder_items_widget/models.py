@@ -2,6 +2,12 @@ from django.db import models
 from .widgets import ReorderItemsWidget
 
 
+__all__ = (
+    'ReorderItemsFieldMixin',
+    'ReorderItemsField',
+)
+
+
 class ReorderItemsFieldMixin:
     """
     This mixin makes any kind of integer fields to an index field for reordering

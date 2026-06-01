@@ -3,6 +3,14 @@ from django.contrib import admin
 from .models import ReorderItemsFieldMixin
 
 
+__all__ = (
+    'ReorderItemsInlineMixin',
+    'ReorderItemsInline',
+    'ReorderItemsModelAdminMixin',
+    'ReorderItemsModelAdmin',
+)
+
+
 class GetReorderItemsFieldMixin:
     def get_reorder_items_field(self):
         fields = self.model._meta.get_fields()
