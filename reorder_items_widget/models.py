@@ -31,16 +31,6 @@ class ReorderItemsFieldMixin:
 
         super().__init__(*args, **kwargs)
 
-    def formfield(self, **kwargs):
-        """
-        Customising the ``form_class``.
-
-        :return: IntegerField with a custom ``form_class``.
-        :rtype: django.db.models.IntegerField
-        """
-        kwargs['widget'] = ReorderItemsWidget()
-        return super().formfield(**kwargs)
-
 
 class ReorderItemsField(ReorderItemsFieldMixin, models.PositiveSmallIntegerField):
     """
