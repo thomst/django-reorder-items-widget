@@ -15,7 +15,8 @@ class GetReorderItemsFieldMixin:
 class ReorderItemsInlineMixin(GetReorderItemsFieldMixin):
     """
     An inline mixin adding the name of the :class:`~.models.ReorderItemsField`
-    to the `fields` attribute.
+    to the `fields` attribute. Use this mixin with a TabularInline since this is
+    what the :class:`~.widgets.ReorderItemsWidget` was designed for.
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
