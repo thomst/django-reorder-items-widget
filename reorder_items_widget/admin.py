@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import ReorderItemsFieldMixin
 
 
-class BaseReorderItemsAdminMixin:
+class GetReorderItemsFieldMixin:
     def get_reorder_items_field(self):
         fields = self.model._meta.get_fields()
         try:
@@ -12,7 +12,7 @@ class BaseReorderItemsAdminMixin:
             raise AttributeError(f'Model has not ReorderItemsField: {self.model}')
 
 
-class ReorderItemsInlineMixin(BaseReorderItemsAdminMixin):
+class ReorderItemsInlineMixin(GetReorderItemsFieldMixin):
     """
     An inline mixin adding the name of the :class:`~.models.ReorderItemsField`
     to the `fields` attribute.
@@ -27,7 +27,7 @@ class ReorderItemsInlineMixin(BaseReorderItemsAdminMixin):
             self.fields += (field.name,)
 
 
-class ReorderItemsModelAdminMixin(BaseReorderItemsAdminMixin):
+class ReorderItemsModelAdminMixin(GetReorderItemsFieldMixin):
     """
     An inline mixin adding the name of the :class:`~.models.ReorderItemsField`
     to the `list_display`, `exclude` and `list_editable` attributes.
