@@ -127,20 +127,8 @@
             this.initFormSubmission();
         }
 
-        getRows() {
-            // Check if we work with an inline formset and use the has_original
-            // class to exclude empty forms.
-            var selector;
-            if (this.table.id == 'result_list') {
-                selector = 'tbody > tr';
-            } else {
-                selector = 'tbody > tr.has_original'
-            }
-            return this.table.querySelectorAll(selector);
-        }
-
         initRows() {
-            [].forEach.call(this.getRows(), (row) => {
+            this.table.querySelectorAll('tbody > tr').forEach((row) => {
                 new ReorderItemsRow(row, this.table);
             });
         }
@@ -153,12 +141,70 @@
         initFormSubmission() {
             const that = this;
             this.form.addEventListener("submit", function (e) {
-                [].forEach.call(that.getRows(), (row, counter) => {
-                    const index = that.baseIndex + counter;
+                let index = that.baseIndex;
+                that.table.querySelectorAll('tbody > tr').forEach((row) => {
+                    if (row.querySelector('td.delete > input').checked) return;
                     row.querySelector('.reorder-items-widget-index').value = index;
+                    index++;
                 });
             });
         }
+    }
+
+
+    class ExtraRow {
+        constructor (row) {
+            this.row = row;
+            this.values = this.serialize();
+            if (!this.row.dataset.formValues) {
+                this.row.dataset.formValues = this.values;
+            }
+        }
+
+        serialize() {
+            let values = '';
+            let form = document.createElement('form');
+            form.appendChild(this.row.cloneNode(true));
+            Object.keys(form.elements).forEach(key => {
+                values += form.elements[key].value;
+            });
+            return values;
+        }
+
+        hasChanged() {
+            return this.serialize() != this.row.dataset.formValues;
+        }
+    }
+
+
+    class ReorderItemsInlineTable extends ReorderItemsTable {
+
+        initRows() {
+            this.table.querySelectorAll('tbody > tr.form-row.has_original').forEach((row) => {
+                new ReorderItemsRow(row, this.table);
+            });
+            this.table.querySelectorAll('tbody > tr.form-row:not(.has_original):not(.empty-form)').forEach((row) => {
+                new ExtraRow(row);
+            });
+        }
+
+        initFormSubmission() {
+            const that = this;
+            this.form.addEventListener("submit", function (e) {
+                let index = that.baseIndex;
+                that.table.querySelectorAll('tbody > tr.has_original').forEach((row) => {
+                    if (row.querySelector('td.delete > input').checked) return;
+                    row.querySelector('.reorder-items-widget-index').value = index;
+                    index++;
+                });
+                that.table.querySelectorAll('tbody > tr.form-row:not(.has_original):not(.empty-form)').forEach((row) => {
+                    if (! new ExtraRow(row).hasChanged()) return;
+                    row.querySelector('.reorder-items-widget-index').value = index;
+                    index++;
+                });
+            });
+        }
+
     }
 
 
@@ -166,7 +212,16 @@
         // Init each table which uses the reorder-items-widget.
         document.querySelectorAll('table').forEach((el) => {
             if (el.querySelector('.drag-handle')) {
-                new ReorderItemsTable(el);
+                if (el.id == 'result_list') {
+                    new ReorderItemsTable(el);
+                } else {
+                    new ReorderItemsInlineTable(el);
+                    document.addEventListener('formset:added', (event) => {
+                        if (event.target.querySelector('.reorder-items-widget-index')) {
+                            new ExtraRow(event.target);
+                        }
+                    });
+                }
             }
         });
     });
