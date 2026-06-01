@@ -52,6 +52,12 @@ class ReorderItemsModelAdminMixin(GetReorderItemsFieldMixin):
             self.list_editable += (field.name,)
 
 
+class ReorderItemsInline(ReorderItemsInlineMixin, admin.TabularInline):
+    """
+    A TabularInline using the :class:`.ReorderItemsInlineMixin`.
+    """
+
+
 class ReorderItemsModelAdmin(ReorderItemsModelAdminMixin, admin.ModelAdmin):
     """
     A model admin class using the :class:`~.ReorderItemsModelAdminMixin` mixin.
