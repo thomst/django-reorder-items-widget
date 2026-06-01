@@ -12,6 +12,9 @@ __all__ = (
 
 
 class GetReorderItemsFieldMixin:
+    """
+    A mixin to get the reorder items field from the model.
+    """
     def get_reorder_items_field(self):
         fields = self.model._meta.get_fields()
         try:
