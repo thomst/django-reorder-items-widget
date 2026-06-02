@@ -1,17 +1,17 @@
 from django.db import models
 from django.dispatch import receiver
 from django.core.exceptions import FieldError
-from .models import UsingReorderItemsSignalsMixin
+from .models import ReorderItemsFieldMixin
 
 
 def has_reorder_items_field(instance):
     fields = instance._meta.get_fields()
-    return any([isinstance(f, UsingReorderItemsSignalsMixin) for f in fields])
+    return any([isinstance(f, ReorderItemsFieldMixin) for f in fields])
 
 
 def get_reorder_items_field(instance):
     fields = instance._meta.get_fields()
-    return next((f for f in fields if isinstance(f, UsingReorderItemsSignalsMixin)), None)
+    return next((f for f in fields if isinstance(f, ReorderItemsFieldMixin)), None)
 
 
 def get_items(instance):
