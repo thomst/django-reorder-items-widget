@@ -83,11 +83,7 @@ class ReorderItemsAdminRenderTests(TestCase):
 
     def setUp(self):
         User = get_user_model()
-        self.admin_user = User.objects.create_superuser(
-            username='admin',
-            email='admin@example.com',
-            password='password',
-        )
+        self.admin_user = User.objects.get(username='admin')
         self.client.force_login(self.admin_user)
 
     def test_reorder_items_widget_rendered_in_changelist(self):
