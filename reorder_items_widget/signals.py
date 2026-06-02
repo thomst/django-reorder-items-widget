@@ -1,3 +1,17 @@
+"""
+This module provides two signal handlers that works with a reorder items model
+field. The field will be identified by the
+:class:`UsingReorderItemsSignalsMixin` as its subclass.
+
+The pre_save signal makes sure that the value of this field is set to the next
+higher value when a new item is created. The post_delete signal fixes the values
+of the remaining items when an item was deleted.
+
+The items to deduce the next higher value or to fix will be filtered by the
+fields listed in the `grouped_by` attribute of the field, if it is set.
+Otherwise all items will be evaluated.
+"""
+
 from django.db import models
 from django.dispatch import receiver
 from django.core.exceptions import FieldError
@@ -31,8 +45,8 @@ def get_items(instance):
 @receiver(models.signals.pre_save)
 def pre_save_reorder_items(sender, instance, **kwargs):
     """
-    A pre_save signal handler setting the reorder-items-field of a new item to
-    the next higher value.
+    A pre_save signal handler setting the :class:`ReorderItemsField` of a new
+    item to the next higher value.
     """
     # Ensure instance was added and not changed.
     if not instance.pk is None:
@@ -54,7 +68,7 @@ def pre_save_reorder_items(sender, instance, **kwargs):
 @receiver(models.signals.post_delete)
 def post_delete_reorder_items(sender, instance, **kwargs):
     """
-    A post_delete signal handler fixing the reorder-items-field values of
+    A post_delete signal handler fixing the :class:`ReorderItemsField` values of
     remaining items.
     """
     # Check if instance has a reorder items field.

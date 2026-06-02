@@ -1,3 +1,12 @@
+"""
+This module provides a model field that eases the implementation of reorderable
+items in Django's admin interface. The :class:`ReorderItemsField` is a
+PositiveSmallIntegerField build the :class:`ReorderItemsFieldMixin` mixin.
+
+This mixin makes the field known by the admin mixins in :mod:`~.admin` and the
+signal handlers in :mod:`~.signals`.
+"""
+
 from django.db import models
 
 
