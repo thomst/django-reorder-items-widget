@@ -55,6 +55,8 @@ def post_delete_reorder_items(sender, instance, **kwargs):
 
     field = get_reorder_items_field(instance)
     items = get_items(instance)
-    for item in items.filter(index__gt=getattr(instance, field.name)):
-        item.index -= 1
+    index = getattr(instance, field.name)
+    for item in items.filter(index__gt=index):
+        item.index = index
         item.save()
+        index += 1
