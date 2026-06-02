@@ -7,6 +7,7 @@ from example.admin import ItemInline, BaseItemAdmin
 from example.models import Container, Item
 from reorder_items_widget.models import ReorderItemsField
 from reorder_items_widget.widgets import ReorderItemsWidget
+from reorder_items_widget.signals import has_reorder_items_field, get_reorder_items_field
 
 # Just for coverage score.
 from reorder_items_widget import __version__
@@ -36,13 +37,27 @@ class WidgetTestCase(TestCase):
 
 
 class ReorderItemsFieldTests(TestCase):
-    def test_reorder_items_field_rejects_unique_true(self):
-        with self.assertRaisesMessage(ValueError, 'Do not use unique=True with a ReorderItemsField.'):
-            ReorderItemsField(unique=True)
+    def test_reorder_items_field_unique_true(self):
+        field = ReorderItemsField()
+        self.assertFalse(field.unique)
+
+    def test_reorder_items_field_blank_true(self):
+        field = ReorderItemsField()
+        self.assertTrue(field.blank)
 
 
 class ReorderItemsSignalsTests(TestCase):
     fixtures = ['testdata.json']
+
+    def test_has_reoroder_items_field(self):
+        item = Item.objects.get(pk=1)
+        self.assertTrue(has_reorder_items_field(item))
+
+    def test_get_reorder_items_field(self):
+        item = Item.objects.get(pk=1)
+        field = get_reorder_items_field(item)
+        self.assertIsNotNone(field)
+        self.assertIsInstance(field, ReorderItemsField)
 
     def test_pre_save_sets_next_index_for_new_item(self):
         container = Container.objects.get(pk=1)
