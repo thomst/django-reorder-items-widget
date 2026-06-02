@@ -9,22 +9,30 @@
 ## Description
 
 Reorder your items by simply dragging them to their new position. This works
-fine within django admin's changelists or inline model forms.
+fine within admin changelists and inline formsets.
 
-All you need to do is to use an editable index field with the famous
-`ReorderItemsWidget` of this app.
+The main component is the `ReorderItemsWidget` which provides the drag and drop
+interface on top of an index field and updates the indexes of listed items on
+form submission.
+
+Still there are some neccessary setups to make a full functional admin
+integration of the reorder items feature: we need a model field for the widget,
+an appropriate model admin configuration and a logic to set or update indexes
+to keep a sequence of objects intact when adding or removing items.
+
+This app provides everything you need to make this setup as easy as possible.
 
 
 ## Installation
 
 Install via pip:
+
 ```
 pip install django-reorder-items-widget
 ```
 
-## Setup
-
 Add `reorder_items_widget` to your `INSTALLED_APPS`:
+
 ```
 INSTALLED_APPS = [
     'reorder_items_widget',
@@ -32,58 +40,95 @@ INSTALLED_APPS = [
 ]
 ```
 
-Add a index field to your model:
+
+## Getting started
+
+### Setup for a reorderable changelist
+
+Add a `ReorderItemsField` field to your model:
+
 ```
+from django.db import models
+from reorder_items_widget import ReorderItemsField
+
 class Item(models.Model):
-    index = models.PositiveSmallIntegerField()
     ...
+    index = models.ReorderItemsField()
+
     class Meta:
         ordering = ('index',)
 ```
 
-Using the ReorderItemsWidget with your index field only makes sense in result
-lists or inline modeladmin forms. A simple way to put the widget in place is a
-custom model form:
-```
-class ReorderItemForm(forms.ModelForm):
-    class Meta:
-        widgets={'index': ReorderItemsWidget()}
-```
+Setup your model admin using the `ReorderItemsModelAdmin`:
 
-Now you can use this form with your changelist by overwriting the
-`get_changelist_form` method of your model admin:
 ```
-class BaseItemAdmin(admin.ModelAdmin):
-    list_editable = ("index",)
-    list_display = ("index", ...)
+from django.contrib import admin
+from reorder_items_widget import ReorderItemsModelAdmin
 
-    def get_changelist_form(self, request, **kwargs):
-        kwargs.setdefault('form', ReorderItemForm)
-        return super().get_changelist_form(request, **kwargs)
-```
-
-**_NOTE:_** Mind that your index field must be editable.
-
-To use the widget with your inline modeladmin simple at your form to the
-`TabularInline` class:
-```
-class ItemInline(admin.TabularInline):
-    form = ReorderItemForm
-    fields = ("index", ...)
+class ItemModelAdmin(ReorderItemsModelAdmin):
     ...
 ```
 
-That's it.
+You don't have to do anything with the index field in your model admin. It's
+already setup by the base class.
+
+Now you can reorder your items within the changelist only by drag and drop. And
+completely forget about the index field which won't show up in the whole admin
+backend at all.
+
+### Setup for a reorderable inline
+
+Again setup your models with a `ReorderItemsField`:
+
+```
+from django.db import models
+from reorder_items_widget import ReorderItemsField
+
+class Container(models.Model):
+    ...
+
+class Item(models.Model):
+    ...
+    index = models.ReorderItemsField(grouped_by=['container'])
+    container = models.ForeignKey(Container, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ('container', 'index')
+```
+
+Mind the grouped_by argument for the `ReorderItemsField`. This argument tells
+the field, that the ordering should be container specific. For each container
+object the indexes of the related items will start anew with zero.
+
+Now setup the model admins using the `ReorderItemsInline`:
+
+```
+from django.contrib import admin
+from reorder_items_widget import ReorderItemsInline
+
+class ItemInline(ReorderItemsInline):
+    ...
+
+class ContainerModelAdmin(admin.ModelAdmin):
+    inlines = (ItemInline,)
+```
+
+Again there is no need to handle the index field.
+
+Now visit the changeform of your container object and enjoy reordering its
+items.
+
 
 ## Caveats
 
 The widget will always number your items sequentially. So reordering a filtered
-list of items might have unexpected results. Paging however should not be an
-issue since indexes are updated using the index of the first list item as base.
+list of items might have unexpected results. Paging however should not be a
+problem since the index of the first listed item will be used as a base.
+
 
 ## General considerations on switching index values
 
-There is a general issue with switching values on a unique index field: In
+There is a general issue with switching values on an unique index field: In
 mysql like databases you will run into a constraint violation - even if you
 update all items in a single update transaction.
 
@@ -91,6 +136,9 @@ To work around this you can either obmit the unique constraint. Or implement a
 complex saving logic like using the negative counterparts of your indexes in a
 preceding update round and finally switch those values back to their positive
 equivalent.
+
+The `ReoderItemsField` provided by this app will simple use `unique=False`.
+
 
 ## Contribute
 
