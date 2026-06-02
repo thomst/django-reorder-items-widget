@@ -30,6 +30,10 @@ def get_items(instance):
 
 @receiver(models.signals.pre_save)
 def pre_save_reorder_items(sender, instance, **kwargs):
+    """
+    A pre_save signal handler setting the reorder-items-field of a new item to
+    the next higher value.
+    """
     # Ensure instance was added and not changed.
     if not instance.pk is None:
         return
@@ -49,6 +53,10 @@ def pre_save_reorder_items(sender, instance, **kwargs):
 
 @receiver(models.signals.post_delete)
 def post_delete_reorder_items(sender, instance, **kwargs):
+    """
+    A post_delete signal handler fixing the reorder-items-field values of
+    remaining items.
+    """
     # Check if instance has a reorder items field.
     if not has_reorder_items_field(instance):
         return
