@@ -155,20 +155,20 @@
     class ExtraRow {
         constructor (row) {
             this.row = row;
-            this.values = this.serialize();
-            if (!this.row.dataset.formValues) {
-                this.row.dataset.formValues = this.values;
-            }
         }
 
         serialize() {
             let values = '';
             let form = document.createElement('form');
             form.appendChild(this.row.cloneNode(true));
-            Object.keys(form.elements).forEach(key => {
-                values += form.elements[key].value;
-            });
+            for (const element of form.elements) {
+                values += element.value;
+            }
             return values;
+        }
+
+        saveState() {
+            this.row.dataset.formValues = this.serialize();
         }
 
         hasChanged() {
@@ -179,12 +179,21 @@
 
     class ReorderItemsInlineTable extends ReorderItemsTable {
 
+        constructor (table) {
+            super(table);
+            document.addEventListener('formset:added', (event) => {
+                if (event.target.querySelector('.reorder-items-widget-index')) {
+                    new ExtraRow(event.target).saveState();
+                }
+            });
+        }
+
         initRows() {
             this.table.querySelectorAll('tbody > tr.form-row.has_original').forEach((row) => {
                 new ReorderItemsRow(row, this.table);
             });
             this.table.querySelectorAll('tbody > tr.form-row:not(.has_original):not(.empty-form)').forEach((row) => {
-                new ExtraRow(row);
+                new ExtraRow(row).saveState();
             });
         }
 
@@ -216,11 +225,6 @@
                     new ReorderItemsTable(el);
                 } else {
                     new ReorderItemsInlineTable(el);
-                    document.addEventListener('formset:added', (event) => {
-                        if (event.target.querySelector('.reorder-items-widget-index')) {
-                            new ExtraRow(event.target);
-                        }
-                    });
                 }
             }
         });
