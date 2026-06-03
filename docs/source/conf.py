@@ -14,7 +14,7 @@ import django
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../example'))
 
-from simple_page.__version__ import __version__
+from reorder_items_widget.__version__ import __version__
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "example.settings"
 django.setup()
