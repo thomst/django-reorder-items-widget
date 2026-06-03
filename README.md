@@ -6,21 +6,34 @@
 [<img src="https://img.shields.io/badge/django-3.2%20%7C%204.0%20%7C%204.1%20%7C%204.2%20%7C%205.0%20%7C%205.1%20%7C%205.2%20%7C%206.0-orange">](https://img.shields.io/badge/django-3.2%20%7C%204.0%20%7C%204.1%20%7C%204.2%20%7C%205.0%20%7C%205.1%20%7C%205.2%20%7C%206.0-orange)
 
 
+## Links
+
+- [github](https://github.com/thomst/django-reorder-items-widget/)
+- [docs](https://thomst.github.io/django-reorder-items-widget/)
+- [pypi](https://pypi.org/project/django-reorder-items-widget/)
+
+
 ## Description
 
 Reorder your items by simply dragging them to their new position. This works
 fine within admin changelists and inline formsets.
 
-The main component is the `ReorderItemsWidget` which provides the drag and drop
+The main component is the [ReorderItemsWidget] which provides the drag and drop
 interface on top of an index field and updates the indexes of listed items on
 form submission.
 
 Still there are some neccessary setups to make a full functional admin
-integration of the reorder items feature: we need a model field for the widget,
-an appropriate model admin configuration and a logic to set or update indexes
-to keep a sequence of objects intact when adding or removing items.
+integration of the reorder items feature: we need a [model field] for the
+widget, an appropriate [admin configuration] and we probably do not want to
+update indexes manually when adding or removing items bypassing the widget.
+Therefore we use some [signal handlers] for the model field.
 
 This app provides everything you need to make this setup as easy as possible.
+
+[ReorderItemsWidget]: https://thomst.github.io/django-reorder-items-widget/topics/widgets.html
+[model field]: https://thomst.github.io/django-reorder-items-widget/topics/models.html
+[admin configuration]: https://thomst.github.io/django-reorder-items-widget/topics/admin.html
+[signal handlers]: https://thomst.github.io/django-reorder-items-widget/topics/signals.html
 
 
 ## Installation
@@ -124,20 +137,6 @@ items.
 The widget will always number your items sequentially. So reordering a filtered
 list of items might have unexpected results. Paging however should not be a
 problem since the index of the first listed item will be used as a base.
-
-
-## General considerations on switching index values
-
-There is a general issue with switching values on an unique index field: In
-mysql like databases you will run into a constraint violation - even if you
-update all items in a single update transaction.
-
-To work around this you can either obmit the unique constraint. Or implement a
-complex saving logic like using the negative counterparts of your indexes in a
-preceding update round and finally switch those values back to their positive
-equivalent.
-
-The `ReoderItemsField` provided by this app will simple use `unique=False`.
 
 
 ## Contribute
