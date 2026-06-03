@@ -11,11 +11,9 @@ class ReoroderItemsWidgetMixin:
     """
     Widget to make a number input a reorder items widget. The original form
     field will be hidden and a drag and drop handler will be rendered instead.
-    Items in result lists and inline formsets will be reorderable by dragging
-    the rows to their new position.
-
-    On form submission the index values will be updated to reflect the new
-    order.
+    Items in result lists or inline formsets will be reorderable by dragging the
+    rows to their new position. The values of th index field will be updated on
+    form submission to reflect the new order.
     """
     template_name = 'forms/widgets/reorder-items-widget.html'
 
