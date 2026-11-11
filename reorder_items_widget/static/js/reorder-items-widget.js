@@ -143,7 +143,6 @@
             this.form.addEventListener("submit", function (e) {
                 let index = that.baseIndex;
                 that.table.querySelectorAll('tbody > tr').forEach((row) => {
-                    if (row.querySelector('td.delete > input').checked) return;
                     row.querySelector('.reorder-items-widget-index').value = index;
                     index++;
                 });
