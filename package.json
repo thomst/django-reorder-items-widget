@@ -1,0 +1,11 @@
+{
+  "name": "django-reorder-items-widget",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  }
+}
